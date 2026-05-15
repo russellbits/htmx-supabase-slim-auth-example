@@ -17,7 +17,7 @@ Hypermedia as the Engine of Application State (HATEOAS): When an AI agent hits a
 
 **Web Components Encapsulate Semantics**
 
-Standard HTML has a finite vocabulary (<article>, <form>, <button>). If you are building a complex UI—say, a live data graph or an interactive checkout container—standard tags hit a ceiling.
+Standard HTML has a finite vocabulary (`<article>`, `<form>`, `<button>`). If you are building a complex UI—say, a live data graph or an interactive checkout container—standard tags hit a ceiling.
 
 Web Components allow you to create custom, highly descriptive elements like <secure-checkout> or <data-spindle-diagram>. This creates a custom domain-specific language (DSL) directly in the markup. An AI agent scanning the DOM instantly understands the exact operational boundary and purpose of that element.
 
@@ -25,16 +25,17 @@ Web Components allow you to create custom, highly descriptive elements like <sec
 
 While Web Components manage the capsule, HTMX manages the behavior. Instead of writing custom JavaScript fetch() requests inside your Web Component's shadow root, you use standard HTMX attributes on or inside the custom element.
 
+An AI agent can more readily understand what this custom element is, what triggers it, and exactly what it alters.
+
 ```HTML
-<!-- An AI agent immediately understands what this custom element is, 
-     what triggers it, and exactly what it alters. -->
 <user-profile-card id="profile">
     <button hx-get="/api/user/123" hx-target="#profile" hx-swap="outerHTML">
         Refresh Profile Data
     </button>
-</user-profile-card>```
+</user-profile-card>
+```
 
-By pairing them, you get the absolute best of both worlds: Web Components give the AI agent unambiguous structural meaning, while HTMX gives the agent clear, declarative execution paths—all without a single line of client-side application state logic. Because HTMX only sends partial HTML back and forth, such elements can even be incoprorated into typical chat agents (although that is a generally boring use of LLMs on the web).
+By pairing Web Components and HTMX, you get the absolute best of both worlds: Web Components give the AI agent unambiguous structural meaning, while HTMX gives the agent clear, declarative execution paths—all without a single line of client-side application state logic. Because HTMX only sends partial HTML back and forth, such elements can even be incorporated into typical chat agents (although that is a generally boring use of LLMs on the web).
 
 Combining Web Components with HTMX creates an incredibly powerful paradigm for an AI-agent-centric web.
 
@@ -74,6 +75,18 @@ Ensure you have the following installed locally:
 ### 1. Clone and Install Dependencies
 
 ```bash
-git clone [https://github.com/your-username/htmx-supabase-slim-auth-example.git](https://github.com/your-username/htmx-supabase-slim-auth-example.git)
-cd htmx-supabase-slim-auth-example
+# Clone the repository
+git clone https://github.com/russellbits/htmx-supabase-slim-auth-example.git
+cd htmx-supabase-slim-auth-example\
+
+# Install backend dependencies via Composer
 composer install
+
+# Initialize your local environment file
+cp .env.example .env
+
+# Open .env and add your Supabase credentials
+
+# Start the PHP built-in development server
+php -S localhost:8080 -t public
+```
