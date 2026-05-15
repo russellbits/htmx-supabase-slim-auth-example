@@ -1,0 +1,11 @@
+# Composer dependencies
+/vendor/
+
+# Local configuration secrets
+.env
+
+# macOS system files
+.DS_Store
+
+# PHP built-in server artifacts
+*.log
