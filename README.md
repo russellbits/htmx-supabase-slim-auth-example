@@ -1,6 +1,6 @@
 # HTMX + Slim 4 + Supabase Authentication Example
 
-A lightweight, minimal implementation of a secure user authentication system using **PHP (Slim 4)**, **HTMX**, and **Supabase Auth (GoTrue REST API)**. 
+A lightweight, minimal implementation of a secure user authentication system using **PHP (Slim 4)**, **HTMX**, and **Supabase Auth (GoTrue REST API)**. (Web Component integration coming soon!)
 
 This repository serves as a step-by-step tutorial showing how to build an ultra-slim, server-driven auth loop without a heavy JavaScript build system or a monolithic framework.
 
