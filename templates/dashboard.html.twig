@@ -1,0 +1,9 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<h1>Welcome to your secure dashboard!</h1>
+<p>Logged in as: <strong>{{ email }}</strong></p>
+<a href="/logout">Logout</a>
+{% endblock %}
