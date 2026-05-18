@@ -1,0 +1,19 @@
+:root {
+    font-size: clamp(16px, 14px + 0.5vw, 24px);
+    font-family: sans-serif;
+    --gradient-top: rgb(255, 210, 33);     /* Warm Yellow */
+    --gradient-bottom: rgb(254, 40, 202);  /* Vibrant Pink */
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    background-color: var(--gradient-top);
+    background-image: linear-gradient(to bottom, var(--gradient-top), var(--gradient-bottom));
+    background-repeat: no-repeat;
+    min-height: 100vh;
+    margin: 0;
+}
