@@ -3,18 +3,25 @@
 {% block title %}Sign In - Slim App{% endblock %}
 
 {% block content %}
-<div class="form-container">
-    <h2>Sign In</h2>
-    <!-- Fixed extra '>' typo from original script -->
-    <form hx-post="/auth/login" hx-target="#error-message" hx-swap="innerHTML settle:0s swap:400">
-        <label for="email">Email</label>
-        <input type="email" id="email" name="email" required>
+    <login-form action="/auth/login" target="#error-message"></login-form>
 
-        <label for="password">Password</label>
-        <input type="password" id="password" name="password" required>
+    <!-- Define the web component template here to keep the JS clean -->
+    <template id="login-form-template">
+        <div class="form-container">
+            <h2>Sign In</h2>
+            <form>
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required>
 
-        <button type="submit">Log In</button>
-    </form>
-    <div id="error-message"></div>
-</div>
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required>
+
+                <button type="submit">Log In</button>
+            </form>
+            <div id="error-message"></div>
+        </div>
+    </template>
+
+    <!-- Include the component script -->
+    <script src="/js/components/login-form.js" defer></script>
 {% endblock %}

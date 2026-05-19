@@ -14,7 +14,7 @@ $twig = Twig::create(__DIR__ . '/../templates', ['cache' => false]);
 
 $dotenv->load();
 $app->add(TwigMiddleware::create($app, $twig));
-$app->addBodyParsingMiddleware();
+$app->addBodyParsingMiddleware(); // Ensures $request->getParsedBody() captures our Web Component form values
 $app->addRoutingMiddleware();
 $app->addErrorMiddleware(true, true, true);
 
@@ -36,7 +36,6 @@ $authMiddleware = function (Request $request, $handler) {
         ]);
 
         $userData = json_decode($res->getBody(), true);
-
         $request = $request->withAttribute('user', $userData);
 
         return $handler->handle($request);
@@ -59,6 +58,8 @@ function handleUnauthorized(Request $request): \Psr\Http\Message\ResponseInterfa
 
     return $response->withHeader('Location', '/login')->withStatus(302);
 }
+
+// --- ROUTES ---
 
 $app->get('/', function (Request $request, Response $response) {
     return $response->withHeader('Location', '/login')->withStatus(302);
@@ -91,37 +92,41 @@ $app->post('/auth/login', function (Request $request, Response $response) {
         $data = json_decode($res->getBody(), true);
         $accessToken = $data['access_token'];
 
+        // Authentication Success: Set the auth token cookie
         $response = $response->withHeader('Set-Cookie', "sb_token=$accessToken; Path=/; HttpOnly; SameSite=Lax");
+
+        // Instruct HTMX to handle a clean, top-level window redirect to the dashboard
         return $response->withHeader('HX-Redirect', '/dashboard');
 
     } catch (\Exception $e) {
         $view = Twig::fromRequest($request);
+
+        // Authentication Failure: Target only the inner HTML container of `#error-message`
+        // We drop down to a 200 OK status code here because some HTMX installations reject 400-level
+        // responses from swapping targets unless configured with `hx-select` or extensions.
         return $view->render($response, 'partials/login-error.html.twig', [
             'error_message' => 'Invalid login credentials.'
-        ])->withStatus(400);
+        ])->withStatus(200);
     }
 });
 
 $app->group('', function ($group) {
 
     $group->get('/dashboard', function (Request $request, Response $response) {
-
         $user = $request->getAttribute('user');
         $email = $user['email'] ?? 'User';
 
         $view = Twig::fromRequest($request);
         return $view->render($response, 'dashboard.html.twig', [
-                    'email' => $email
-                ]);
+            'email' => $email
+        ]);
     });
 
     $group->get('/logout', function (Request $request, Response $response) {
-
         $response = $response->withHeader(
             'Set-Cookie',
             'sb_token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly; SameSite=Lax'
         );
-
 
         if ($request->hasHeader('HX-Request')) {
             return $response->withHeader('HX-Redirect', '/login');
