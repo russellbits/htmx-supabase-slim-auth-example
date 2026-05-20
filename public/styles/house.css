@@ -1,8 +1,9 @@
 :root {
     font-size: clamp(16px, 14px + 0.5vw, 24px);
     font-family: sans-serif;
-    --gradient-top: rgb(255, 210, 33);     /* Warm Yellow */
-    --gradient-bottom: rgb(254, 40, 202);  /* Vibrant Pink */
+    --house-blue: rgb(0, 119, 190); /* Vibrant Ocean Blue */
+    --house-dark-blue: rgb(29, 45, 68); /* Deep Marine Blue */
+    --dark-gray: rgb(33, 37, 41); /* Dark Gray */
 }
 
 body {
@@ -11,8 +12,14 @@ body {
     justify-content: center;
     align-items: center;
     color: white;
-    background-color: var(--gradient-top);
-    background-image: linear-gradient(to bottom, var(--gradient-top), var(--gradient-bottom));
+    background-color: var(--house-blue);
+    background-image: linear-gradient(to bottom, var(--house-blue), var(--gradient-bottom));
+    background-image: radial-gradient(
+        circle at center,
+        var(--house-blue) 0%,
+        var(--house-dark-blue) 60%,
+        var(--dark-gray) 100%
+      );
     background-repeat: no-repeat;
     min-height: 100vh;
     margin: 0;
