@@ -1,11 +1,8 @@
-
-
-/** @type { import('@storybook/html-vite').StorybookConfig } */
-const config = {
-  "stories": [
-    "../src/**/*.stories.@(js|jsx|mjs|ts|tsx)"
-  ],
-  "addons": [],
-  "framework": "@storybook/html-vite"
+export default {
+  stories: ["../stories/**/*.stories.@(json|js|mjs|ts)"],
+  addons: ["@storybook/addon-essentials"],
+  framework: {
+    name: "@storybook/html-vite",
+    options: {},
+  },
 };
-export default config;

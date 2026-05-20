@@ -1,12 +1,12 @@
 {
   "name": "htmx-supabase-slim-auth-example",
   "version": "1.0.0",
+   "type": "module",
   "description": "A lightweight, minimal implementation of a secure user authentication system using **PHP (Slim 4)**, **HTMX**, and **Supabase Auth (GoTrue REST API)**. (Web Component integration coming soon!)",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "dev": "php -S localhost:8000 -t public & pid=$!; bun run storybook; kill $pid"
   },
   "repository": {
     "type": "git",
@@ -15,13 +15,16 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs",
+
   "bugs": {
     "url": "https://github.com/russellbits/htmx-supabase-slim-auth-example/issues"
   },
   "homepage": "https://github.com/russellbits/htmx-supabase-slim-auth-example#readme",
   "devDependencies": {
-    "storybook": "^10.4.0",
-    "@storybook/html-vite": "^10.4.0"
+    "storybook": "8.6.14",
+    "@storybook/html": "8.6.14",
+    "@storybook/html-vite": "8.6.14",
+    "@storybook/addon-essentials": "8.6.14",
+    "vite": "^5.4.11"
   }
 }

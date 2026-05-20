@@ -59,6 +59,53 @@ function handleUnauthorized(Request $request): \Psr\Http\Message\ResponseInterfa
     return $response->withHeader('Location', '/login')->withStatus(302);
 }
 
+// --- STORYBOOK DEV ROUTES ---
+// Since we don't have a container, we can read our environment status directly from $_ENV
+if (($_ENV['APP_ENV'] ?? 'development') === 'development') {
+
+    // Add explicit CORS headers to allow Storybook (port 6006) to fetch from Slim (port 8000)
+    $app->options('/storybook/render', function (Request $request, Response $response) {
+        return $response
+            ->withHeader('Access-Control-Allow-Origin', 'http://localhost:6006')
+            ->withHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization')
+            ->withHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+    });
+
+    // Pass the global $twig object directly into our route scope using "use ($twig)"
+    $app->get('/storybook/render', function (Request $request, Response $response) use ($twig) {
+        $queryParams = $request->getQueryParams();
+        $template = $queryParams['id'] ?? null;
+
+        $args = $queryParams['args'] ?? [];
+        if (is_string($args)) {
+            $args = json_decode($args, true) ?? [];
+        }
+
+        if (!$template) {
+            $response->getBody()->write('Error: Missing template "id" target.');
+            return $response->withStatus(400);
+        }
+
+        try {
+            // Render the template using the standalone $twig instance
+            // Note: Slim's custom Twig view helper uses ->fetch(), or we can use the environment engine directly
+            $html = $twig->getEnvironment()->render($template, $args);
+
+            $response->getBody()->write($html);
+
+            return $response
+                ->withHeader('Content-Type', 'text/html')
+                ->withHeader('Access-Control-Allow-Origin', 'http://localhost:6006'); // Allow Storybook to read the HTML
+
+        } catch (\Exception $e) {
+            $response->getBody()->write('<h3>Twig Render Error</h3><pre>' . htmlspecialchars($e->getMessage()) . '</pre>');
+            return $response
+                ->withStatus(500)
+                ->withHeader('Access-Control-Allow-Origin', 'http://localhost:6006');
+        }
+    });
+}
+
 // --- ROUTES ---
 
 $app->get('/', function (Request $request, Response $response) {
