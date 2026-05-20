@@ -1,6 +1,9 @@
 # Composer dependencies
 /vendor/
 
+# Node packages
+/node_modules/
+
 # Local configuration secrets
 .env
 
@@ -9,3 +12,6 @@
 
 # PHP built-in server artifacts
 *.log
+
+*storybook.log
+storybook-static
