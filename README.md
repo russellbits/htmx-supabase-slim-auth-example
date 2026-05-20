@@ -1,12 +1,13 @@
 # HTMX + Slim 4 + Supabase Authentication Example
 
-A lightweight, minimal implementation of a secure user authentication system using **PHP (Slim 4)**, **HTMX**, and **Supabase Auth (GoTrue REST API)**. (Web Component integration coming soon!)
+A lightweight, minimal implementation of a secure user authentication system using **PHP (Slim 4)** as a router, **HTMX** built into standard web components, and **Supabase Auth (GoTrue REST API)**.
 
-This repository serves as a step-by-step tutorial showing how to build an ultra-slim, server-driven auth loop without a heavy JavaScript build system or a monolithic framework.
+This repository serves as a step-by-step tutorial showing how to build an ultra-slim, server-driven auth loop without a heavy JavaScript build system or a monolithic (SPA) framework.
 
 ---
 
 ## But why?
+
 I see a web coming in which AI agent users outnumber human users. The web site architecture du jour is SPA (Single-page Applications) that are largely driven by client-side JavaScript (see [React](https://react.dev), [Vue](https://vuejs.org), [Svelte](https://svelte.dev), [Angular](https://angular.dev), etc.). We have optimized the web for client-side JavaScript execution (in the name of pleasant human-machine interaction or user interface), assuming the client is always a human using a browser engine like V8. This is problematic for for future AI web Agents (and incidentally, right now, the number of tokens they have to burn through in order to understand on online app).
 
 SPAs have a **tendency** to create illegible, unsemantic HTML that is hard for AI agents to parse. Technically, an engineer can write flawless, semantic HTML inside a React or Svelte component. The real issue isn’t that SPAs can't be semantic; it’s that the SPA architecture fundamentally divorces semantic HTML from the data lifecycle. In an SPA, the HTML sent from the server is often a hollow shell (<div id="app"></div>). The actual semantic structure is generated imperatively in the browser after API calls fetch raw JSON data. An AI agent visiting an SPA cannot simply read the source; it must run a full browser simulation, wait for hydrated JavaScript execution, and scrape an ephemeral DOM. Moreover, by moving the application state entirely back to the server, you eliminate client-side racing conditions. There is no client-side state engine to desynchronize from the UI. Because HTMX relies on declarative HTML elements (hx-post), the DOM structure and its functional capability are delivered simultaneously as a singular hypermedia unit. If the button exists on the screen, its behavior exists instantly.
@@ -15,15 +16,11 @@ SPAs have a **tendency** to create illegible, unsemantic HTML that is hard for A
 
 **Deterministic vs. Non-Deterministic Interaction**: SPAs rely heavily on client-side state machines, local storage, and complex event listeners attached to generic <div> tags. AI agents could excel at reading structured document flows but struggle with non-deterministic UI states caused by asynchronous client-side race conditions.
 
-**Web Components Encapsulate Semantics**
-
-Standard HTML has a finite vocabulary (`<article>`, `<form>`, `<button>`). If you are building a complex UI—say, a live data graph or an interactive checkout container—standard tags hit a ceiling.
+**Web Components Encapsulate Semantics**: Standard HTML has a finite vocabulary (`<article>`, `<form>`, `<button>`). If you are building a complex UI—say, a live data graph or an interactive checkout container—standard tags hit a ceiling.
 
 Web Components allow you to create custom, highly descriptive elements like <secure-checkout> or <data-spindle-diagram>. This creates a custom domain-specific language (DSL) directly in the markup. An AI agent scanning the DOM instantly understands the exact operational boundary and purpose of that element.
 
-**HTMX Unifies the Network State**
-
-While Web Components manage the capsule, HTMX manages the behavior. Instead of writing custom JavaScript fetch() requests inside your Web Component's shadow root, you use standard HTMX attributes on or inside the custom element.
+**HTMX Unifies the Network State**: While Web Components manage the capsule, HTMX manages the behavior. Instead of writing custom JavaScript fetch() requests inside your Web Component's shadow root, you use standard HTMX attributes on or inside the custom element.
 
 An AI agent can more readily understand what this custom element is, what triggers it, and exactly what it alters.
 
@@ -89,4 +86,8 @@ cp .env.example .env
 
 # Start the PHP built-in development server
 php -S localhost:8080 -t public
+
+# OR, for local development, bun run dev will start storybook as well as the php development
+# Both need to run for Storkbook do it's thang.
+bun run dev
 ```
