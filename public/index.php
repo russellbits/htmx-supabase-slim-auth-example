@@ -19,6 +19,11 @@ $app->addRoutingMiddleware();
 $app->addErrorMiddleware(true, true, true);
 
 $authMiddleware = function (Request $request, $handler) {
+    // --- BYPASS AUTH FOR PREFLIGHT HANDSHAKES ---
+    if ($request->getMethod() === 'OPTIONS') {
+        return $handler->handle($request);
+    }
+
     $cookies = $request->getCookieParams();
     $token = $cookies['sb_token'] ?? null;
 
@@ -51,6 +56,11 @@ function handleUnauthorized(Request $request): \Psr\Http\Message\ResponseInterfa
         'Set-Cookie',
         'sb_token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly; SameSite=Lax'
     );
+
+    // --- ADD CORS FALLBACKS SO STORYBOOK CAN READ THE 401/302 SAFELY ---
+    $response = $response
+        ->withHeader('Access-Control-Allow-Origin', 'http://localhost:6006')
+        ->withHeader('Access-Control-Allow-Credentials', 'true');
 
     if ($request->hasHeader('HX-Request')) {
         return $response->withHeader('HX-Redirect', '/login')->withStatus(401);
@@ -157,7 +167,7 @@ $app->post('/auth/login', function (Request $request, Response $response) {
     }
 });
 
-$app->group('', function ($group) {
+$app->group('', function ($group) use ($twig) {
 
     $group->get('/dashboard', function (Request $request, Response $response) {
         $user = $request->getAttribute('user');
@@ -180,6 +190,67 @@ $app->group('', function ($group) {
         }
 
         return $response->withHeader('Location', '/login')->withStatus(302);
+    });
+
+    $group->map(['GET', 'OPTIONS'], '/api/profile-card', function (Request $request, Response $response) use ($twig) {
+
+        // 1. Handle preflight handshake completely and exit early
+        if ($request->getMethod() === 'OPTIONS') {
+            return $response
+                ->withHeader('Access-Control-Allow-Origin', 'http://localhost:6006')
+                ->withHeader('Access-Control-Allow-Credentials', 'true')
+                ->withHeader('Access-Control-Allow-Methods', 'GET, OPTIONS')
+                ->withHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization, HX-Request, HX-Trigger, HX-Target, HX-Current-URL')
+                ->withStatus(200);
+        }
+
+        // 2. Safely capture the authenticated user or provide an explicit sandbox fallback
+        $user = $request->getAttribute('user');
+        $userId = $user['id'] ?? null;
+        $email = $user['email'] ?? 'sandbox-user@identity.ai'; // Fallback display for Storybook preview loops
+
+        $displayName = 'Sandbox Explorer';
+        $website = 'https://storybook.js.org';
+        $bio = 'Simulating structural element parameters within isolated component viewports.';
+
+        // 3. Only query Supabase if a genuine token was decoded by the middleware
+        if ($userId) {
+            $client = new \GuzzleHttp\Client();
+            try {
+                $res = $client->get($_ENV['SUPABASE_URL'] . '/rest/v1/profiles?id=eq.' . $userId, [
+                    'headers' => [
+                        'apikey' => $_ENV['SUPABASE_ANON_KEY'],
+                        'Authorization' => 'Bearer ' . ($_COOKIE['sb_token'] ?? ''),
+                        'Accept' => 'application/json'
+                    ]
+                ]);
+
+                $profileData = json_decode($res->getBody(), true);
+                if (!empty($profileData)) {
+                    $displayName = $profileData[0]['display_name'] ?? 'No Name Set';
+                    $website = $profileData[0]['website'] ?? '';
+                    $bio = $profileData[0]['bio'] ?? 'No bio written yet.';
+                }
+            } catch (\Exception $e) {
+                // Keep development defaults on exception timeouts
+            }
+        }
+
+        $html = $twig->getEnvironment()->render('partials/user-profile.html.twig', [
+            'render_content_only' => true,
+            'email' => $email,
+            'display_name' => $displayName,
+            'website' => $website,
+            'bio' => $bio
+        ]);
+
+        $response->getBody()->write($html);
+
+        // 4. Return the finalized payload with explicit cross-origin clearance
+        return $response
+            ->withHeader('Content-Type', 'text/html')
+            ->withHeader('Access-Control-Allow-Origin', 'http://localhost:6006')
+            ->withHeader('Access-Control-Allow-Credentials', 'true');
     });
 
 })->add($authMiddleware);

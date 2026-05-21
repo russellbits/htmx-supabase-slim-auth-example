@@ -7,5 +7,14 @@
 <!-- Load HTMX so components can process hx-* tags inside the canvas -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/htmx/2.0.0/htmx.min.js"></script>
 
+<script>
+    // 1. Tell HTMX it is safe to make cross-port requests to our Slim API during sandboxing
+    htmx.config.selfRequestsOnly = false;
+
+    // 2. Ensure cookies/auth tokens flow across ports safely
+    htmx.config.withCredentials = true;
+</script>
+
 <!-- Load your Web Component definition file -->
 <script src="http://localhost:8000/js/components/login-form.js"></script>
+<script src="http://localhost:8000/js/components/user-profile.js"></script>

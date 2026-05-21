@@ -3,7 +3,19 @@
 {% block title %}Dashboard{% endblock %}
 
 {% block content %}
-<h1>Welcome to your secure dashboard!</h1>
-<p>Logged in as: <strong>{{ email }}</strong></p>
-<a href="/logout">Logout</a>
+<main class="container">
+    <h1>Welcome to your secure dashboard!</h1>
+    <p>Logged in as: <strong>{{ email }}</strong></p>
+
+    {% include 'partials/user-profile.html.twig' %}
+
+    <p style="margin-top: 2rem;">
+        <a href="/logout" role="button" class="secondary">Logout</a>
+    </p>
+</main>
+{% endblock %}
+
+{% block extra_scripts %}
+
+    <script src="/js/components/user-profile.js" defer></script>
 {% endblock %}

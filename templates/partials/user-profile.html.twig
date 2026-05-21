@@ -1,0 +1,29 @@
+{% if not render_content_only %}
+<template id="user-profile-template">
+    <div class="profile-card-inner" style="border: 1px solid var(--pico-muted-border-color); padding: 1.5rem; border-radius: 8px; background: var(--pico-card-background-color);">
+        <h4 style="margin: 0 0 0.25rem 0;" id="profile-name">Loading Profile...</h4>
+        <p style="font-size: 0.85rem; color: var(--pico-muted-color); margin-bottom: 0.75rem;" id="profile-email">...</p>
+        <hr style="margin: 0.5rem 0;">
+        <p style="font-size: 0.95rem; margin-bottom: 0;" id="profile-bio">...</p>
+    </div>
+</template>
+
+<user-profile hx-get="{{ source_url|default('/api/profile-card') }}" hx-trigger="load" hx-target="this" hx-swap="innerHTML">
+    <div style="padding: 1rem; text-align: center; color: var(--pico-muted-color);">
+        Fetching profile nodes...
+    </div>
+</user-profile>
+{% else %}
+    {# Async layout snippet fed back by Slim #}
+    <div class="profile-card-inner" style="border: 1px solid var(--pico-muted-border-color); padding: 1.5rem; border-radius: 8px; background: var(--pico-card-background-color);">
+        <h4 style="margin: 0 0 0.25rem 0; color: var(--pico-primary-color);">{{ display_name }}</h4>
+        <p style="font-size: 0.85rem; color: var(--pico-muted-color); margin-bottom: 0.75rem;">
+            {{ email }}
+            {% if website %} • <a href="{{ website }}" target="_blank" style="font-size: 0.85rem;">{{ website }}</a>{% endif %}
+        </p>
+        <hr style="margin: 0.5rem 0; border-color: var(--pico-muted-border-color);">
+        <p style="font-size: 0.95rem; margin-bottom: 0; font-style: italic; color: var(--pico-color);">
+            "{{ bio }}"
+        </p>
+    </div>
+{% endif %}
