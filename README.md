@@ -1,6 +1,8 @@
 # HTMX + Slim 4 + Supabase Authentication Example
 
-A lightweight, minimal implementation of a secure user authentication system using **PHP (Slim 4)** as a router, **HTMX** built into standard web components, and **Supabase Auth (GoTrue REST API)**.
+A lightweight, minimal implementation of a secure user authentication system using **PHP (Slim 4)** as a router, **HTMX** built into standard web components, and **Supabase Auth (REST API)**.
+
+*As a sidenote, I have read in multiple places that coding agents are better with Laravel and Blade, so I may switch to that in the near future.*
 
 This repository serves as a step-by-step tutorial showing how to build an ultra-slim, server-driven auth loop without a heavy JavaScript build system or a monolithic (SPA) framework.
 
